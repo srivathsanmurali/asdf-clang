@@ -31,7 +31,6 @@ download_source_file() {
   curl -Lo $download_path -C - $download_url
 }
 
-
 get_download_file_path() {
   local version=$1
   local tmp_download_dir=$2
@@ -66,6 +65,5 @@ get_download_url() {
   local version=$1
   echo "http://releases.llvm.org/$version/clang+llvm-$version-$(get_variant)"
 }
-
 
 install_clang $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
