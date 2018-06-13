@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+install_clang() {
+  local version=$1
+  local install_path=$2
+
+  if [ "$TMPDIR" = "" ]; then
+    local tmp_download_dir=$(mktemp -d -t clang_build_XXXXXX)
+  else
+    local tmp_download_dir=$TMPDIR
+  fi
+
+  # path to the tar file
+  local source_path=$(get_download_file_path $version $tmp_download_dir)
+  echo $source_path
+  download_source_file $version $source_path
+
+  # running this in a subshell
+  # we don't want to disturb current working dir
+  (
+    tar xf $source_path -C $install_path --strip-components=1 || exit 1
+  )
+}
+
+
+download_source_file() {
+  local version=$1
+  local download_path=$2
+  local download_url=$(get_download_url $version)
+
+  curl -Lo $download_path -C - $download_url
+}
+
+
+get_download_file_path() {
+  local version=$1
+  local tmp_download_dir=$2
+
+  echo "$tmp_download_dir/clang_$version_.tar.xz"
+}
+
+# Get the "variant" piece of the clang url.
+get_variant() {
+	case "$(uname -s)" in
+		Linux)
+			case "$(uname -m)" in
+				x86_64) echo x86_64-linux-gnu-ubuntu-16.04.tar.xz ;;
+				*) exit 1 ;;
+			esac ;;
+    FreeBSD)
+			case "$(uname -m)" in
+				x86_64) echo amd64-unknown-freebsd-10.tar.xz ;;
+				i[[3-9]]86) echo i386-unknown-freebsd-10.tar.xz ;;
+				*) exit 1 ;;
+      esac ;;
+		Darwin)
+			case "$(uname -m)" in
+				x86_64) echo x86_64-apple-darwin-tar.xz ;;
+				*) exit 1;;
+			esac ;;
+		*) exit 1 ;;
+	esac
+}
+
+get_download_url() {
+  local version=$1
+  echo "http://releases.llvm.org/$version/clang+llvm-$version-$(get_variant)"
+}
+
+
+install_clang $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
