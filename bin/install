@@ -35,7 +35,7 @@ get_download_file_path() {
   local version=$1
   local tmp_download_dir=$2
 
-  echo "$tmp_download_dir/clang_$version_.tar.xz"
+  echo "$tmp_download_dir/clang_${version}_.tar.xz"
 }
 
 # Get the "variant" piece of the clang url.
