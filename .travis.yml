@@ -1,6 +1,10 @@
 language: c
 script: asdf plugin-test cmake https://github.com/srivathsanmurali/asdf-clang.git
 before_script:
+  - curl --version
+  - sed --version
+  - awk --version
+  - tar --version
   - git clone https://github.com/asdf-vm/asdf.git
   - . asdf/asdf.sh
 os:
